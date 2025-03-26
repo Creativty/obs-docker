@@ -1,4 +1,5 @@
 FROM ubuntu:20.04
+RUN echo "Good evening ubuntu"
 RUN apt-get update
 RUN apt-get install -y keyboard-configuration tzdata </dev/null # lol
 RUN apt-get install -y build-essential cmake curl ffmpeg git libboost-dev libnss3 mesa-utils qtbase5-dev strace x11-xserver-utils
@@ -6,30 +7,33 @@ RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:obsproject/obs-studio
 RUN apt-get install -y obs-studio
 WORKDIR /src
-RUN git clone --recursive https://github.com/obsproject/obs-studio.git
+RUN git clone --recursive https://github.com/obsproject/obs-studio.git obs-studio
 
-RUN git clone https://github.com/CatxFish/obs-v4l2sink.git
-WORKDIR obs-v4l2sink
-WORKDIR build
-RUN cmake -DLIBOBS_INCLUDE_DIR="../../obs-studio/libobs" -DCMAKE_INSTALL_PREFIX=/usr ..
-RUN make -j4
-RUN make install
+# RUN git clone https://github.com/CatxFish/obs-v4l2sink.git
+# WORKDIR obs-v4l2sink
+# CMD mkdir build
+# WORKDIR build
+# RUN ls -R /usr/lib | grep cmake
+# RUN cmake -DLIBOBS_INCLUDE_DIR="/src/obs-studio/libobs" -DLIBOBS_LIB="/usr/lib/libobs.so" -DCMAKE_INSTALL_PREFIX=/usr ..
+# RUN make -j8
+# RUN make install
 WORKDIR /src
 
-RUN git clone --recursive https://github.com/Palakis/obs-websocket.git
-# The following line seems necessary because that header otherwise can't be found (hackish?)
+# RUN git clone --recursive https://github.com/Palakis/obs-websocket.git
+# # The following line seems necessary because that header otherwise can't be found (hackish?)
 # RUN ln -s /src/obs-studio/UI/obs-frontend-api/obs-frontend-api.h /usr/include/obs/
-WORKDIR obs-websocket
-#RUN git checkout 5.x
-WORKDIR build
-RUN cmake -DLIBOBS_INCLUDE_DIR="../../obs-studio/libobs" -DCMAKE_INSTALL_PREFIX=/usr ..
-RUN make -j4
-RUN make install
+# WORKDIR obs-websocket
+# RUN git checkout 5.x
+# WORKDIR build
+# RUN cmake -DLIBOBS_INCLUDE_DIR="../../obs-studio/libobs" -DCMAKE_INSTALL_PREFIX=/usr ..
+# RUN make -j8
+# RUN make install
 WORKDIR /src
 
+RUN mkdir -p /usr/lib/obs-plugins
 RUN cp /usr/lib/x86_64-linux-gnu/obs-plugins/*.so /usr/lib/obs-plugins
 
 # Note 1: this depends on libnss3 (installed with APT earlier).
 # Note 2: this is not enough to install the plugin. A symlink must
 #         be created in $HOME/.config/obs-studio/plugins as well.
-RUN curl -sL https://github.com/bazukas/obs-linuxbrowser/releases/download/0.6.1/linuxbrowser0.6.1-obs23.0.2-64bit.tgz | tar -zxf-
+# RUN curl -sL https://github.com/bazukas/obs-linuxbrowser/releases/download/0.6.1/linuxbrowser0.6.1-obs23.0.2-64bit.tgz | tar -zxf-

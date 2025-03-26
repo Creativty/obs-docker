@@ -1,4 +1,5 @@
 FROM debian:bullseye
+RUN echo "Good night debian"
 RUN apt-get update
 #RUN apt-get install -y keyboard-configuration tzdata </dev/null # lol
 
